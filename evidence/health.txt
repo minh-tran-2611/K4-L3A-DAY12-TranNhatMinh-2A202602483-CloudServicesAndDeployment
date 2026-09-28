@@ -1,0 +1,14 @@
+Captured UTC: 2026-09-28T12:40:16.827391+00:00
+Command: curl.exe -i https://app-production-b8e1.up.railway.app/health
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Mon, 28 Sep 2026 12:40:16 GMT
+Server: railway-hikari
+x-railway-request-id: hvYNFWbZQYidu7P19o6EoQ
+Content-Length: 57
+x-hikari-trace: hkg1.aebn
+x-railway-edge: hkg1
+Connection: keep-alive
+
+{"status":"ok","service":"day12-agent","version":"1.0.0"}

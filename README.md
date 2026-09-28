@@ -1,6 +1,6 @@
 ![CI](https://github.com/minh-tran-2611/K4-L3A-DAY12-TranNhatMinh-2A202602483-CloudServicesAndDeployment/actions/workflows/ci.yml/badge.svg)
 
-> **Bản đã triển khai:** public URL https://app-production-b8e1.up.railway.app (Railway). Xem [các bước thực hiện](THUC_HIEN.md), [thông tin triển khai](DEPLOYMENT.md) và [kết quả chấm](evidence/grade.txt). CI/CD bằng GitHub Actions: test → build image → deploy Railway khi push lên `main`.
+> **Bản đã triển khai:** public URL https://app-production-b8e1.up.railway.app (Railway). Xem [các bước thực hiện](THUC_HIEN.md), [thông tin triển khai](DEPLOYMENT.md) và [kết quả chấm](evidence/grade.txt). GitHub Actions kiểm tra test và build image; deploy tự động cần secret `RAILWAY_TOKEN` (đang chờ xác minh tài khoản Railway để tạo project token).
 
 # K4 — Level 3A, Ngày 12: Hạ Tầng Cloud & Deployment (240 phút)
 

@@ -18,7 +18,7 @@
 3. Khai báo biến môi trường cho service `app` (bảng dưới), không đưa giá trị vào Git.
 4. `railway up --ci --service app`: Railway build `Dockerfile`, chạy CMD của image và chỉ chuyển traffic khi `/ready` trả 200.
 5. `railway domain --service app` sinh domain HTTPS công khai.
-6. Từ đó, GitHub Actions (`.github/workflows/ci.yml`) tự deploy lại mỗi lần push lên `main` sau khi test và build xanh, dùng secret `RAILWAY_TOKEN`.
+6. GitHub Actions (`.github/workflows/ci.yml`) đã có job test, build và deploy phụ thuộc hai job trước. Hiện Railway yêu cầu xác minh tài khoản trước khi tạo project token, nên chưa có secret `RAILWAY_TOKEN`; deploy tự động đang bị bỏ qua. Cần hoàn tất bước này trước khi coi bonus CI/CD đã hoàn chỉnh.
 
 ## Biến môi trường trên Railway
 
@@ -62,4 +62,14 @@ Kết quả chạy thật ngày 2026-09-28:
 ## Minh chứng
 
 - `screenshots/dashboard.png`: dashboard Railway, service `app` và `Redis` đang Active.
-- `screenshots/health.png`: trình duyệt mở `https://app-production-b8e1.up.railway.app/health`.
+- `evidence/health.txt`: nguyên output `curl.exe -i` gọi HTTPS `/health`, có thời gian thu thập. Chrome hiện báo `ERR_BLOCKED_BY_CLIENT` khi mở endpoint trực tiếp; curl và test cloud vẫn thành công.
+
+## Output curl được lưu lại
+
+Xem [bản ghi HTTP đầy đủ](evidence/health.txt). Body trả về:
+
+```json
+{"status":"ok","service":"day12-agent","version":"1.0.0"}
+```
+
+Kiểm tra bắt buộc mới nhất: 79 passed, 4 skipped (chỉ các test local fallback); không có test bắt buộc thất bại.

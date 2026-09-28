@@ -2,17 +2,17 @@
 
 Sinh viên: Trần Nhật Minh — mã học viên 2A202602483 (theo tên repository).
 
-Phạm vi: chạy local bằng Docker Compose theo lựa chọn của người dùng; chưa deploy cloud.
+Phạm vi hiện tại: đã triển khai app và Redis trên Railway, đồng thời có Docker Compose để kiểm tra local. Public URL: https://app-production-b8e1.up.railway.app.
 
-Kết quả: CP1–CP4 đạt đủ 70 test (gồm build Docker thật); CP5 đạt 7/8 test local/tài liệu, còn thiếu ảnh chụp, 5 test cloud bỏ qua. `grade.py --no-bonus` trả 94/100 do CP5 bị chặn ở 9/15; đây không phải xác nhận hồ sơ nộp đã đầy đủ. Xem `evidence/grade.txt`.
+Kiểm tra ngày 2026-09-28: CP1–CP5 đạt 79 test, gồm build Docker thật và `/ask` với API key trên cloud. Bốn test local fallback được bỏ qua đúng điều kiện vì đang dùng cloud. Kết quả chấm mới nhất nằm trong `evidence/grade.txt`; điểm tự động không thay thế đánh giá nội dung phản ánh của giảng viên.
 
-Đã kiểm chứng ba replica, mất kết nối Redis, và shutdown sạch trong 1,42 giây (exit code 0). Hiện để lại stack một agent + Redis. Image theo `docker images`: 271 MB multi-stage và 1.7 GB single-stage.
+Đã kiểm chứng ba replica, mất kết nối Redis, và shutdown sạch trong 1,42 giây (exit code 0). Image theo `docker images`: 271 MB multi-stage và 1.7 GB single-stage.
 
 ## 1. Chuẩn bị
 
 - Kiểm tra Docker Desktop, Docker Compose và Python.
 - Tạo `.venv`, cài `requirements.txt`.
-- Sinh API key ngẫu nhiên trong `.env`, bật `LOCAL_FALLBACK=true`.
+- Sinh API key ngẫu nhiên trong `.env`; sau khi deploy cloud, đặt `LOCAL_FALLBACK=false` và cấu hình `DEPLOY_API_KEY` cục bộ.
 - Kiểm tra `.env` được Git bỏ qua. Không đưa secret vào tài liệu hoặc image.
 
 ## 2. Hoàn thiện CP1–CP4
@@ -65,16 +65,15 @@ docker compose -f docker-compose.yml -f compose.scale.yml stop nginx
 docker compose up -d --scale agent=1 --remove-orphans
 ```
 
-## 6. Trước khi nộp
+## 6. Cloud, CI và hồ sơ nộp
 
-- Đọc `DEPLOYMENT.md` và bằng chứng kiểm thử; bổ sung ảnh chụp thật nếu chưa có.
-- Đọc và diễn đạt lại `exercises.md` theo hiểu biết của bản thân; nội dung được soạn với hỗ trợ AI.
-- Repository hiện thiếu `DAY12` và chưa đúng phần tên bài. Tên yêu cầu theo mã hiện tại: `K4-L3A-DAY12-TranNhatMinh-2A202602483-CloudServicesAndDeployment`.
-- Chưa đổi tên repo từ xa, chưa push và chưa nộp Codelab.
-- Bonus CI/CD không nằm trong phạm vi bản local này.
-- Không sửa `tests/` hay `grade.py`.
-
-Ảnh còn cần bạn chụp vì công cụ browser/desktop của phiên làm việc không kết nối được: mở `http://localhost:8000/health`, lưu ảnh vào `screenshots/health.png`; chụp stack healthy trong Docker Desktop vào `screenshots/dashboard.png`. Sau đó chạy lại CP5 và commit ảnh bằng `git add screenshots` rồi `git commit -m "CP5: add local deployment screenshots"`.
+- Railway project `perfect-passion`, environment `production`: app và Redis đều Online. Ảnh thật: `screenshots/dashboard.png`.
+- Repo GitHub đã được đổi đúng mẫu: `K4-L3A-DAY12-TranNhatMinh-2A202602483-CloudServicesAndDeployment`, chế độ public. `origin` dùng URL mới.
+- `DEPLOYMENT.md` và Câu 10 trong `exercises.md` đã cập nhật kết quả cloud. Bản ghi HTTP thật từ curl: `evidence/health.txt`.
+- Workflow `.github/workflows/ci.yml` kiểm tra code, build image và chỉ chạy job deploy sau khi hai job đó thành công.
+- Chưa tạo được project token: Railway yêu cầu xác minh tài khoản tại Project Settings → Tokens. Khi được phép tạo, lưu token vào GitHub Actions secret `RAILWAY_TOKEN`; không ghi vào repo hoặc chat. Khi chưa có secret, workflow bỏ qua deploy, nên badge xanh chỉ chứng minh test/build, chưa chứng minh CD hoàn chỉnh.
+- Đọc và diễn đạt phần phản ánh theo hiểu biết bản thân; bài có sử dụng AI hỗ trợ. Không sửa `tests/` hay `grade.py`.
+- Bước nộp link repository trên Codelab chưa được xác nhận.
 
 Khi Docker Hub tải quá chậm, đã tải base image từ Docker Official Images trên ECR Public rồi dùng cache Docker để build; tham khảo [hướng dẫn pull của AWS](https://docs.aws.amazon.com/AmazonECR/latest/public/docker-pull-ecr-image.html). Không thay đổi thiết lập Docker Desktop toàn cục.
 

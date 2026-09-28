@@ -51,4 +51,8 @@ Redis mất kết nối → probe chung báo lỗi ở cả ba container → loa
 
 ### Câu 10 — Deploy thực tế
 
-Chưa triển khai Railway/Render vì chưa có tài khoản cloud, người dùng đã chọn local fallback. Vì vậy chưa có lỗi cloud thực tế để mô tả. Vấn đề quan sát được khi triển khai local là tải image Docker Hub rất chậm: nhiều dòng Downloading lặp lại, Docker daemon vẫn trả lời nhưng compose ps chưa có service. Đã kiểm tra log build, tạm dừng image một stage lớn và tải các base image từ public.ecr.aws/docker/library; sau đó cả hai image đã build thành công. Đây là vấn đề tải image local, không phải một lỗi cloud đã được tái hiện.
+Đã triển khai ứng dụng và Redis lên Railway, project `perfect-passion`, với URL https://app-production-b8e1.up.railway.app. Kiểm tra lại ngày 2026-09-28: `/health` và `/ready` trả 200; `/ask` thiếu key trả 401 và có key đúng trả 200. Bản ghi curl nằm trong `evidence/health.txt`; các kiểm tra tự động CP5 gọi trực tiếp bản cloud.
+
+Một vấn đề quan sát được là mở đường dẫn gốc `/` trả 404; runtime log Railway ghi `GET / HTTP/1.1 404 Not Found`, trong khi `GET /health` trả 200. App chỉ khai báo các endpoint `/health`, `/ready` và `/ask`, nên 404 ở `/` không có nghĩa deployment thất bại. Cách kiểm tra là gọi đúng endpoint, dùng `/ready` làm healthcheck triển khai và xem log service. Không cần thêm trang chủ để đáp ứng yêu cầu API của lab.
+
+Khi hoàn thiện CI/CD, trang Project Settings → Tokens báo tài khoản cần được xác minh mới tạo được project token. Vì vậy chưa thể cấu hình `RAILWAY_TOKEN` cho GitHub Actions; bước deploy tự động chưa được xác nhận. Đây là giới hạn tài khoản, không phải lỗi build ứng dụng. Trình duyệt hiện cũng chặn URL health với `ERR_BLOCKED_BY_CLIENT`; curl và bộ test vẫn truy cập cloud được, nên cần phân biệt lỗi phía trình duyệt với lỗi service.
