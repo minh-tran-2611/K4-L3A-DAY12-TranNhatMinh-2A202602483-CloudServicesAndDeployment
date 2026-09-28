@@ -4,56 +4,62 @@
 |---|---|
 | Họ và tên | Trần Nhật Minh |
 | Mã học viên | 2A202602483 |
-| Repo | https://github.com/minh-tran-2611/K4-L3A-TranNhatMinh-2A202602483-Cloud-Service-And-Deployment |
-| Local URL | http://localhost:8000 |
-| Public URL | Chưa có; dùng LOCAL_FALLBACK=true |
-| Platform | Docker Desktop + Docker Compose tại máy; chưa triển khai Railway / Render |
+| Repo | https://github.com/minh-tran-2611/K4-L3A-DAY12-TranNhatMinh-2A202602483-CloudServicesAndDeployment |
+| Public URL | https://app-production-b8e1.up.railway.app |
+| Platform | Railway (project `perfect-passion`, environment `production`, service `app` + `Redis`) |
+| Build | Dockerfile multi-stage, cấu hình trong `railway.toml`; healthcheck `/ready` |
+| Local URL | http://localhost:8000 (Docker Compose, dùng khi phát triển) |
 | Ngày thực hiện | 2026-09-28 |
 
-## Lý do dùng phương án dự phòng
+## Cách deploy
 
-Người dùng chưa có tài khoản cloud và chọn chạy local trước. Không có URL HTTPS công khai. CP5 bị giới hạn tối đa 9/15 điểm theo quy định lab.
+1. Tạo project Railway và thêm Redis từ database template (service tên `Redis`).
+2. `railway link` thư mục repo vào project, `railway add --service app` tạo service ứng dụng.
+3. Khai báo biến môi trường cho service `app` (bảng dưới), không đưa giá trị vào Git.
+4. `railway up --ci --service app`: Railway build `Dockerfile`, chạy CMD của image và chỉ chuyển traffic khi `/ready` trả 200.
+5. `railway domain --service app` sinh domain HTTPS công khai.
+6. Từ đó, GitHub Actions (`.github/workflows/ci.yml`) tự deploy lại mỗi lần push lên `main` sau khi test và build xanh, dùng secret `RAILWAY_TOKEN`.
 
-## Biến môi trường
+## Biến môi trường trên Railway
 
 | Biến | Nguồn |
 |---|---|
-| `PORT` | Compose đặt cổng nội bộ 8000 |
-| `AGENT_API_KEY` | Khóa ngẫu nhiên trong `.env` được Git bỏ qua; Compose truyền lúc chạy |
-| `REDIS_URL` | Compose trỏ tới service redis; script trên host dùng localhost |
-| `RATE_LIMIT_PER_MINUTE` | `.env`, 10 request/phút |
-| `MONTHLY_BUDGET_USD` | `.env`, 10 USD/user/tháng |
-| `LOG_LEVEL` | `.env`, INFO |
-| `LOCAL_FALLBACK` | `.env`, true |
-| `DEPLOY_API_KEY` | `.env`, cùng key của service local |
+| `PORT` | Railway tự cấp (log: Uvicorn chạy trên 8080); app đọc `$PORT`, không cố định |
+| `AGENT_API_KEY` | Khóa ngẫu nhiên sinh bằng `secrets.token_urlsafe`, chỉ lưu trong Railway Variables và `.env` local |
+| `REDIS_URL` | Reference `${{Redis.REDIS_URL}}` → `redis.railway.internal:6379` (mạng private) |
+| `RATE_LIMIT_PER_MINUTE` | `10` |
+| `MONTHLY_BUDGET_USD` | `10.0` |
+| `LOG_LEVEL` | `INFO` |
+| `RAILWAY_DEPLOYMENT_DRAINING_SECONDS` | `30`, cho request đang chạy hoàn tất trước SIGKILL |
 
-## Kiểm tra
+Ở máy local, `.env` đặt `LOCAL_FALLBACK=false` và `DEPLOY_API_KEY` bằng khóa của bản cloud để `tests/test_cp5.py` gọi thử `/ask`.
+
+## Kiểm tra bản cloud
 
 ```powershell
-docker compose up -d --build
-docker compose ps
-curl.exe -i http://localhost:8000/health
-curl.exe -i http://localhost:8000/ready
-.venv\Scripts\python scripts/verify_local.py
+curl.exe -i https://app-production-b8e1.up.railway.app/health
+curl.exe -i https://app-production-b8e1.up.railway.app/ready
+curl.exe -i -X POST https://app-production-b8e1.up.railway.app/ask -H "Content-Type: application/json" -d '{\"question\":\"hi\"}'
+curl.exe -i -X POST https://app-production-b8e1.up.railway.app/ask -H "Content-Type: application/json" -H "X-API-Key: $env:DEPLOY_API_KEY" -H "X-User-Id: demo" -d '{\"question\":\"Deploy la gi?\"}'
 .venv\Scripts\python -m pytest tests/test_cp5.py -v
 ```
 
-Script kiểm tra không in key và lưu kết quả tại `evidence/local-verification.json` sau khi chạy thành công. Kết quả chạy thật:
+Kết quả chạy thật ngày 2026-09-28:
 
-- `/health`: 200, status ok; `/ready`: 200, Redis true.
-- `/ask` thiếu key: 401; user đã vượt budget: 402.
-- 15 lượt liên tiếp: 10 lần 200, sau đó 5 lần 429.
-- `history_length`: 0, 2, 4, 6, 8, 10, 12, 14, 16, 18.
-- 3 replica qua Nginx: cùng kết quả; log chứng minh cả ba cùng phục vụ.
-- Khi dừng Redis: health 200, ready 503; khởi động lại: ready 200.
-- Docker runtime user: uid=999(agent), gid=999(agent).
-- `docker images`: multi-stage 271 MB; single-stage 1.7 GB.
-- CP1–CP5: 77 passed, 1 failed (thiếu screenshot), 5 skipped (cloud).
-- `grade.py --no-bonus`: 94/100; CP5 bị giới hạn 9/15. Ảnh vẫn bắt buộc, điểm tự động không chứng minh đã đủ hồ sơ.
-- Shutdown thật: 1,42 giây, exit code 0, có log service_stopped.
+- `/health`: 200 `{"status":"ok"}`; `/ready`: 200 `{"status":"ready","redis":true}`.
+- `/ask` không có key: 401; có key đúng: 200, trả `answer`, `cost_usd`, `tokens`.
+- 12 request liên tiếp cùng user: 10 lần 200, sau đó 429 (rate limit dùng Redis trên cloud).
+- Runtime log: `event="service_started"`, Uvicorn lắng nghe `0.0.0.0:8080` theo `PORT` của Railway.
 
-Hiện để lại một agent và một Redis đang chạy local. Bộ test và grade.py giữ nguyên. Điểm tự động chưa thay thế việc giảng viên kiểm tra ảnh và nội dung phản ánh.
+## Kiểm tra bản local (trước khi deploy)
+
+- `/health` 200, `/ready` 200; `/ask` thiếu key 401; vượt budget 402; 15 lượt: 10 lần 200 rồi 5 lần 429.
+- `history_length` tăng 0, 2, 4, … 18 qua các lượt hỏi.
+- 3 replica qua Nginx cùng phục vụ; dừng Redis: health 200, ready 503; bật lại: ready 200.
+- Container chạy uid 999 (non-root); image multi-stage 271 MB so với single-stage 1,7 GB.
+- Shutdown: 1,42 giây, exit code 0, có log `service_stopped`.
 
 ## Minh chứng
 
-Ảnh cần bổ sung: `screenshots/health.png` từ trình duyệt mở `/health`, và `screenshots/dashboard.png` từ Docker Desktop hiển thị stack đang chạy. Công cụ điều khiển trình duyệt báo `Unable to load browser request-header policy`; công cụ desktop báo `Computer Use native pipe is unavailable`. Không tạo ảnh giả để thay bằng chứng chạy thật.
+- `screenshots/dashboard.png`: dashboard Railway, service `app` và `Redis` đang Active.
+- `screenshots/health.png`: trình duyệt mở `https://app-production-b8e1.up.railway.app/health`.

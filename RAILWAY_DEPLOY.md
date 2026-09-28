@@ -1,6 +1,6 @@
 # Deploy lab lên Railway
 
-Trạng thái: đã chọn Railway, chưa tạo deployment cloud. Bản local vẫn hoạt động.
+Trạng thái: đã deploy tại https://app-production-b8e1.up.railway.app (project `perfect-passion`, service `app` + `Redis`). Chi tiết và kết quả kiểm tra trong DEPLOYMENT.md.
 
 1. Đăng ký/đăng nhập Railway bằng tài khoản GitHub của bạn.
 2. Push các commit của bài lab lên repository GitHub.

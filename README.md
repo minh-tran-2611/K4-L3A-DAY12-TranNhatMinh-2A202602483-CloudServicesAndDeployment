@@ -1,6 +1,6 @@
 ![CI](https://github.com/minh-tran-2611/K4-L3A-DAY12-TranNhatMinh-2A202602483-CloudServicesAndDeployment/actions/workflows/ci.yml/badge.svg)
 
-> **Bản local đã triển khai:** xem [các bước thực hiện](THUC_HIEN.md), [thông tin triển khai](DEPLOYMENT.md) và [kết quả chấm](evidence/grade.txt). CP1–CP4 đạt đầy đủ; bản local chạy tại http://localhost:8000. Còn thiếu ảnh minh chứng CP5; chưa deploy cloud hoặc push GitHub. Điểm tự động 94/100 (không bonus), chưa phải hồ sơ nộp hoàn chỉnh.
+> **Bản đã triển khai:** public URL https://app-production-b8e1.up.railway.app (Railway). Xem [các bước thực hiện](THUC_HIEN.md), [thông tin triển khai](DEPLOYMENT.md) và [kết quả chấm](evidence/grade.txt). CI/CD bằng GitHub Actions: test → build image → deploy Railway khi push lên `main`.
 
 # K4 — Level 3A, Ngày 12: Hạ Tầng Cloud & Deployment (240 phút)
 
