@@ -1,3 +1,5 @@
+> **Bản local đã triển khai:** xem [các bước thực hiện](THUC_HIEN.md), [thông tin triển khai](DEPLOYMENT.md) và [kết quả chấm](evidence/grade.txt). CP1–CP4 đạt đầy đủ; bản local chạy tại http://localhost:8000. Còn thiếu ảnh minh chứng CP5; chưa deploy cloud hoặc push GitHub. Điểm tự động 94/100 (không bonus), chưa phải hồ sơ nộp hoàn chỉnh.
+
 # K4 — Level 3A, Ngày 12: Hạ Tầng Cloud & Deployment (240 phút)
 
 Đưa một AI agent từ `localhost:8000` lên một địa chỉ công khai mà người khác
