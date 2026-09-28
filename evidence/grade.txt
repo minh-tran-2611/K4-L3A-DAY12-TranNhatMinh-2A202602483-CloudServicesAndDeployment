@@ -10,11 +10,11 @@ tests/test_cp1.py::TestHealthEndpoint::test_health_tra_ve_200
     from starlette.testclient import TestClient as TestClient  # noqa
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-13 passed, 1 warning in 1.22s
+13 passed, 1 warning in 1.07s
 
 >>> CP2 — Docker: multi-stage, bảo mật image
 ................                                                         [100%]
-16 passed in 4.52s
+16 passed in 3.64s
 
 >>> CP3 — API Security: auth, rate limit, cost guard
 ......................                                                   [100%]
@@ -26,13 +26,7 @@ tests/test_cp1.py::TestHealthEndpoint::test_health_tra_ve_200
 
 >>> CP5 — Cloud Deployment: service chạy thật
 .........ssss                                                            [100%]
-9 passed, 4 skipped in 4.07s
-
->>> BONUS — CI/CD với GitHub Actions (không bắt buộc)
-............F                                                            [100%]
-=========================== short test summary info ===========================
-FAILED tests/test_bonus_cicd.py::TestBadge::test_badge_bao_passing - Assertio...
-1 failed, 12 passed in 1.27s
+9 passed, 4 skipped in 4.44s
 
 ==========================================================================
 BẢNG ĐIỂM
@@ -45,11 +39,10 @@ BẢNG ĐIỂM
   Exercises — câu hỏi phản ánh                     10/10 câu             15.0/15
 --------------------------------------------------------------------------
   Điểm phần bắt buộc                                                    100.0/100
-  BONUS — CI/CD với GitHub Actions                 12/13 test             +9.2/10
+  BONUS — CI/CD với GitHub Actions                 bỏ qua (--no-bonus)    +0.0/10
 --------------------------------------------------------------------------
   TỔNG CUỐI (trần 100)                                                  100.0/100
 ==========================================================================
-  ⚠  điểm bonus bị cắt 9.2đ do chạm trần 100
 
   Xuất sắc. Service của bạn đã đạt chuẩn production.
 

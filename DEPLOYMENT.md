@@ -73,3 +73,5 @@ Xem [bản ghi HTTP đầy đủ](evidence/health.txt). Body trả về:
 ```
 
 Kiểm tra bắt buộc mới nhất: 79 passed, 4 skipped (chỉ các test local fallback); không có test bắt buộc thất bại.
+
+- `screenshots/health.png`: ảnh chụp GitHub hiển thị bản ghi curl thật trong `evidence/health.txt`, gồm URL, thời gian, HTTP 200 và JSON. Đây là ảnh bản ghi curl, không phải ảnh mở trực tiếp endpoint trong Chrome.
