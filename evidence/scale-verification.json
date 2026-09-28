@@ -1,0 +1,49 @@
+{
+  "timestamp": "2026-09-28T07:47:59.911220+00:00",
+  "health": {
+    "status_code": 200,
+    "body": {
+      "status": "ok",
+      "service": "day12-agent",
+      "version": "1.0.0"
+    }
+  },
+  "ready": {
+    "status_code": 200,
+    "body": {
+      "status": "ready",
+      "redis": true
+    }
+  },
+  "missing_key": 401,
+  "rate_limit_codes": [
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    429,
+    429,
+    429,
+    429,
+    429
+  ],
+  "history_lengths": [
+    0,
+    2,
+    4,
+    6,
+    8,
+    10,
+    12,
+    14,
+    16,
+    18
+  ],
+  "budget_exceeded": 402
+}

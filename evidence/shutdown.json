@@ -1,0 +1,6 @@
+{
+  "stop_seconds": 1.42,
+  "exit_code": 0,
+  "oom_killed": false,
+  "service_stopped_logged": true
+}

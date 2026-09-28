@@ -1,0 +1,58 @@
+agent-1  | INFO:     Started server process [1]
+agent-1  | INFO:     Waiting for application startup.
+agent-1  | {"service": "day12-agent", "version": "1.0.0", "event": "service_started", "level": "info", "timestamp": "2026-09-28T07:47:34.037576+00:00"}
+agent-1  | INFO:     Application startup complete.
+agent-1  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+agent-1  | INFO:     127.0.0.1:32790 - "GET /health HTTP/1.1" 200 OK
+agent-1  | INFO:     127.0.0.1:49366 - "GET /health HTTP/1.1" 200 OK
+agent-1  | INFO:     127.0.0.1:33206 - "GET /health HTTP/1.1" 200 OK
+agent-1  | INFO:     172.19.0.6:53246 - "GET /ready HTTP/1.1" 200 OK
+agent-1  | {"user_id": "verify-299b166e5408", "tokens_in": 48, "tokens_out": 52, "cost_usd": 3.84e-05, "event": "ask_completed", "level": "info", "timestamp": "2026-09-28T07:48:02.514701+00:00"}
+agent-1  | INFO:     172.19.0.6:53246 - "POST /ask HTTP/1.1" 200 OK
+agent-1  | {"user_id": "verify-299b166e5408", "tokens_in": 213, "tokens_out": 52, "cost_usd": 6.315e-05, "event": "ask_completed", "level": "info", "timestamp": "2026-09-28T07:48:02.578146+00:00"}
+agent-1  | INFO:     172.19.0.6:53246 - "POST /ask HTTP/1.1" 200 OK
+agent-1  | {"user_id": "verify-299b166e5408", "tokens_in": 380, "tokens_out": 52, "cost_usd": 8.82e-05, "event": "ask_completed", "level": "info", "timestamp": "2026-09-28T07:48:02.625810+00:00"}
+agent-1  | INFO:     172.19.0.6:53246 - "POST /ask HTTP/1.1" 200 OK
+agent-1  | INFO:     172.19.0.6:53246 - "POST /ask HTTP/1.1" 429 Too Many Requests
+agent-1  | INFO:     172.19.0.6:53246 - "POST /ask HTTP/1.1" 429 Too Many Requests
+agent-1  | INFO:     127.0.0.1:56758 - "GET /health HTTP/1.1" 200 OK
+agent-3  | INFO:     Started server process [1]
+agent-3  | INFO:     Waiting for application startup.
+agent-3  | INFO:     Application startup complete.
+agent-3  | {"service": "day12-agent", "version": "1.0.0", "event": "service_started", "level": "info", "timestamp": "2026-09-28T07:47:33.224484+00:00"}
+agent-3  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+agent-3  | INFO:     127.0.0.1:46796 - "GET /health HTTP/1.1" 200 OK
+agent-3  | INFO:     127.0.0.1:49354 - "GET /health HTTP/1.1" 200 OK
+agent-3  | INFO:     127.0.0.1:33176 - "GET /health HTTP/1.1" 200 OK
+agent-3  | INFO:     172.19.0.6:37910 - "GET /health HTTP/1.1" 200 OK
+agent-3  | {"user_id": "verify-299b166e5408", "tokens_in": 3, "tokens_out": 41, "cost_usd": 2.505e-05, "event": "ask_completed", "level": "info", "timestamp": "2026-09-28T07:48:02.484247+00:00"}
+agent-3  | INFO:     172.19.0.6:37918 - "POST /ask HTTP/1.1" 200 OK
+agent-3  | {"user_id": "verify-299b166e5408", "tokens_in": 158, "tokens_out": 52, "cost_usd": 5.49e-05, "event": "ask_completed", "level": "info", "timestamp": "2026-09-28T07:48:02.563104+00:00"}
+agent-3  | INFO:     172.19.0.6:37918 - "POST /ask HTTP/1.1" 200 OK
+agent-3  | {"user_id": "verify-299b166e5408", "tokens_in": 324, "tokens_out": 52, "cost_usd": 7.98e-05, "event": "ask_completed", "level": "info", "timestamp": "2026-09-28T07:48:02.610896+00:00"}
+agent-3  | INFO:     172.19.0.6:37918 - "POST /ask HTTP/1.1" 200 OK
+agent-3  | {"user_id": "verify-299b166e5408", "tokens_in": 491, "tokens_out": 52, "cost_usd": 0.00010485, "event": "ask_completed", "level": "info", "timestamp": "2026-09-28T07:48:02.656921+00:00"}
+agent-3  | INFO:     172.19.0.6:37918 - "POST /ask HTTP/1.1" 200 OK
+agent-3  | INFO:     172.19.0.6:37918 - "POST /ask HTTP/1.1" 429 Too Many Requests
+agent-3  | INFO:     172.19.0.6:37918 - "POST /ask HTTP/1.1" 402 Payment Required
+agent-3  | INFO:     127.0.0.1:56738 - "GET /health HTTP/1.1" 200 OK
+agent-3  | INFO:     127.0.0.1:55340 - "GET /health HTTP/1.1" 200 OK
+agent-2  | INFO:     Started server process [1]
+agent-2  | INFO:     Waiting for application startup.
+agent-2  | {"service": "day12-agent", "version": "1.0.0", "event": "service_started", "level": "info", "timestamp": "2026-09-28T07:47:33.645479+00:00"}
+agent-2  | INFO:     Application startup complete.
+agent-2  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+agent-2  | INFO:     127.0.0.1:32782 - "GET /health HTTP/1.1" 200 OK
+agent-2  | INFO:     127.0.0.1:49364 - "GET /health HTTP/1.1" 200 OK
+agent-2  | INFO:     127.0.0.1:33192 - "GET /health HTTP/1.1" 200 OK
+agent-2  | INFO:     172.19.0.6:53862 - "POST /ask HTTP/1.1" 401 Unauthorized
+agent-2  | {"user_id": "verify-299b166e5408", "tokens_in": 103, "tokens_out": 52, "cost_usd": 4.665e-05, "event": "ask_completed", "level": "info", "timestamp": "2026-09-28T07:48:02.548170+00:00"}
+agent-2  | INFO:     172.19.0.6:53862 - "POST /ask HTTP/1.1" 200 OK
+agent-2  | {"user_id": "verify-299b166e5408", "tokens_in": 269, "tokens_out": 52, "cost_usd": 7.155e-05, "event": "ask_completed", "level": "info", "timestamp": "2026-09-28T07:48:02.596165+00:00"}
+agent-2  | INFO:     172.19.0.6:53862 - "POST /ask HTTP/1.1" 200 OK
+agent-2  | {"user_id": "verify-299b166e5408", "tokens_in": 435, "tokens_out": 52, "cost_usd": 9.645e-05, "event": "ask_completed", "level": "info", "timestamp": "2026-09-28T07:48:02.641417+00:00"}
+agent-2  | INFO:     172.19.0.6:53862 - "POST /ask HTTP/1.1" 200 OK
+agent-2  | INFO:     172.19.0.6:53862 - "POST /ask HTTP/1.1" 429 Too Many Requests
+agent-2  | INFO:     172.19.0.6:53862 - "POST /ask HTTP/1.1" 429 Too Many Requests
+agent-2  | INFO:     127.0.0.1:56754 - "GET /health HTTP/1.1" 200 OK
+agent-2  | INFO:     127.0.0.1:55350 - "GET /health HTTP/1.1" 200 OK
