@@ -1,101 +1,59 @@
-# Thông Tin Deploy — Checkpoint 5
-
-> Điền file này sau khi deploy xong. `pytest tests/test_cp5.py` đọc file này
-> để tìm địa chỉ service của bạn và gọi thử.
->
-> **Chỉ ghi TÊN biến môi trường, tuyệt đối không dán giá trị API key vào đây.**
-> Repo này công khai — dán khóa vào là mất khóa.
-
-## Thông Tin Học Viên
+# Thông tin deploy — Checkpoint 5
 
 | Mục | Nội dung |
-|-----|----------|
-| Họ và tên | (điền họ tên) |
-| Mã học viên | (điền mã học viên) |
-| Repo | (điền link repo K4-L3A-DAY12-HoVaTen-MSSV-CloudServicesAndDeployment) |
+|---|---|
+| Họ và tên | Trần Nhật Minh |
+| Mã học viên | 2A202602483 |
+| Repo | https://github.com/minh-tran-2611/K4-L3A-TranNhatMinh-2A202602483-Cloud-Service-And-Deployment |
+| Local URL | http://localhost:8000 |
+| Public URL | Chưa có; dùng LOCAL_FALLBACK=true |
+| Platform | Docker Desktop + Docker Compose tại máy; chưa triển khai Railway / Render |
+| Ngày thực hiện | 2026-09-28 |
 
-## Service
+## Lý do dùng phương án dự phòng
 
-| Mục | Nội dung |
-|-----|----------|
-| Public URL | https://TODO-thay-bang-url-that.up.railway.app |
-| Platform | Railway / Render / Cloud Run — (điền platform bạn dùng) |
-| Ngày deploy | (điền ngày) |
+Người dùng chưa có tài khoản cloud và chọn chạy local trước. Không có URL HTTPS công khai. CP5 bị giới hạn tối đa 9/15 điểm theo quy định lab.
 
-## Biến Môi Trường Đã Set Trên Cloud
+## Biến môi trường
 
-Ghi tên biến và **nguồn giá trị**, không ghi giá trị:
+| Biến | Nguồn |
+|---|---|
+| `PORT` | Compose đặt cổng nội bộ 8000 |
+| `AGENT_API_KEY` | Khóa ngẫu nhiên trong `.env` được Git bỏ qua; Compose truyền lúc chạy |
+| `REDIS_URL` | Compose trỏ tới service redis; script trên host dùng localhost |
+| `RATE_LIMIT_PER_MINUTE` | `.env`, 10 request/phút |
+| `MONTHLY_BUDGET_USD` | `.env`, 10 USD/user/tháng |
+| `LOG_LEVEL` | `.env`, INFO |
+| `LOCAL_FALLBACK` | `.env`, true |
+| `DEPLOY_API_KEY` | `.env`, cùng key của service local |
 
-| Biến | Đã set | Ghi chú |
-|------|--------|---------|
-| `PORT` | ✅ | platform tự gán |
-| `AGENT_API_KEY` | ✅ | đặt trong dashboard, không nằm trong repo |
-| `REDIS_URL` | ✅ | (điền: Redis add-on của platform / Upstash / ...) |
-| `RATE_LIMIT_PER_MINUTE` | ✅ | 10 |
-| `MONTHLY_BUDGET_USD` | ✅ | 10.0 |
-| `LOG_LEVEL` | ✅ | INFO |
+## Kiểm tra
 
-## Lệnh Kiểm Tra
-
-Thay `<URL>` bằng Public URL ở trên:
-
-```bash
-# 1. Liveness — mong đợi 200 {"status":"ok"}
-curl -i <URL>/health
-
-# 2. Readiness — mong đợi 200 {"status":"ready"} (đã nối được Redis)
-curl -i <URL>/ready
-
-# 3. Không có API key — mong đợi 401
-curl -i -X POST <URL>/ask \
-  -H "Content-Type: application/json" \
-  -d '{"question":"Hello"}'
-
-# 4. Có API key — mong đợi 200 kèm câu trả lời
-curl -i -X POST <URL>/ask \
-  -H "Content-Type: application/json" \
-  -H "X-API-Key: $AGENT_API_KEY" \
-  -H "X-User-Id: sv-test" \
-  -d '{"question":"Deploy là gì?"}'
-
-# 5. Rate limit — gọi 15 lần, những lần cuối phải trả 429
-for i in $(seq 1 15); do
-  curl -s -o /dev/null -w "%{http_code} " -X POST <URL>/ask \
-    -H "Content-Type: application/json" \
-    -H "X-API-Key: $AGENT_API_KEY" \
-    -H "X-User-Id: sv-test" \
-    -d '{"question":"test"}'
-done; echo
+```powershell
+docker compose up -d --build
+docker compose ps
+curl.exe -i http://localhost:8000/health
+curl.exe -i http://localhost:8000/ready
+.venv\Scripts\python scripts/verify_local.py
+.venv\Scripts\python -m pytest tests/test_cp5.py -v
 ```
 
-## Kết Quả Chạy Thật
+Script kiểm tra không in key và lưu kết quả tại `evidence/local-verification.json` sau khi chạy thành công. Kết quả chạy thật:
 
-Dán output của các lệnh trên vào đây:
+- `/health`: 200, status ok; `/ready`: 200, Redis true.
+- `/ask` thiếu key: 401; user đã vượt budget: 402.
+- 15 lượt liên tiếp: 10 lần 200, sau đó 5 lần 429.
+- `history_length`: 0, 2, 4, 6, 8, 10, 12, 14, 16, 18.
+- 3 replica qua Nginx: cùng kết quả; log chứng minh cả ba cùng phục vụ.
+- Khi dừng Redis: health 200, ready 503; khởi động lại: ready 200.
+- Docker runtime user: uid=999(agent), gid=999(agent).
+- `docker images`: multi-stage 271 MB; single-stage 1.7 GB.
+- CP1–CP5: 77 passed, 1 failed (thiếu screenshot), 5 skipped (cloud).
+- `grade.py --no-bonus`: 94/100; CP5 bị giới hạn 9/15. Ảnh vẫn bắt buộc, điểm tự động không chứng minh đã đủ hồ sơ.
+- Shutdown thật: 1,42 giây, exit code 0, có log service_stopped.
 
-```
-(điền output)
-```
+Hiện để lại một agent và một Redis đang chạy local. Bộ test và grade.py giữ nguyên. Điểm tự động chưa thay thế việc giảng viên kiểm tra ảnh và nội dung phản ánh.
 
-## Ảnh Chụp Màn Hình
+## Minh chứng
 
-Đặt ảnh trong thư mục `screenshots/`:
-
-- `screenshots/dashboard.png` — trang quản lý service trên platform
-- `screenshots/health.png` — kết quả gọi `/health` từ trình duyệt hoặc curl
-
----
-
-## Nếu Dùng Phương Án Dự Phòng
-
-Không đăng ký được tài khoản cloud? Vẫn nộp được bài, nhưng CP5 tối đa 60% điểm:
-
-1. Đặt `LOCAL_FALLBACK=true` trong `.env`
-2. Chạy `docker compose up -d` rồi kiểm tra `docker compose ps`
-3. Chụp màn hình vào `screenshots/`
-4. Chạy `pytest tests/test_cp5.py -v` — bộ test sẽ tự chuyển sang kiểm tra
-   `http://localhost:8000`
-5. Ghi rõ lý do không deploy được vào phần dưới đây:
-
-```
-(điền lý do nếu dùng phương án dự phòng, ngược lại xóa mục này)
-```
+Ảnh cần bổ sung: `screenshots/health.png` từ trình duyệt mở `/health`, và `screenshots/dashboard.png` từ Docker Desktop hiển thị stack đang chạy. Công cụ điều khiển trình duyệt báo `Unable to load browser request-header policy`; công cụ desktop báo `Computer Use native pipe is unavailable`. Không tạo ảnh giả để thay bằng chứng chạy thật.

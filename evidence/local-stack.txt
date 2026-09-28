@@ -1,0 +1,3 @@
+NAME                                                                   IMAGE                                                                COMMAND                  SERVICE   CREATED              STATUS                        PORTS
+k4-l3a-trannhatminh-2a202602483-cloud-service-and-deployment-agent-1   k4-l3a-trannhatminh-2a202602483-cloud-service-and-deployment-agent   "sh -c 'exec uvicorn…"   agent     About a minute ago   Up About a minute (healthy)   127.0.0.1:8000->8000/tcp
+k4-l3a-trannhatminh-2a202602483-cloud-service-and-deployment-redis-1   redis:7-alpine                                                       "docker-entrypoint.s…"   redis     3 minutes ago        Up 59 seconds (healthy)       127.0.0.1:6379->6379/tcp
