@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run checkpoint tests
+        # CP5 calls the live deployment and the bonus test checks this workflow's own badge.
+        env:
+          AGENT_API_KEY: ci-dummy
+          REDIS_URL: "fake://"
+        run: pytest tests/ -v --ignore=tests/test_cp5.py --ignore=tests/test_bonus_cicd.py
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build -t day12-agent:${{ github.sha }} .
+      - name: Run image as non-root and check health
+        run: |
+          docker run -d --name agent -e AGENT_API_KEY=ci-dummy -e REDIS_URL=fake:// -p 8000:8000 day12-agent:${{ github.sha }}
+          for i in $(seq 1 20); do
+            curl -fsS http://localhost:8000/health && break
+            sleep 1
+          done
+          curl -fsS http://localhost:8000/health
+          test "$(docker exec agent id -u)" != "0"
+      - name: Container logs
+        if: always()
+        run: docker logs agent || true
+
+  deploy:
+    name: deploy
+    needs: [test, build]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      RAILWAY_SERVICE: ${{ vars.RAILWAY_SERVICE || 'app' }}
+      PUBLIC_URL: ${{ vars.PUBLIC_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Deploy to Railway
+        run: |
+          if [ -z "$RAILWAY_TOKEN" ]; then
+            echo "::warning::RAILWAY_TOKEN secret is not set; skipping deploy."
+            exit 0
+          fi
+          npm install -g @railway/cli@4
+          railway up --ci --service "$RAILWAY_SERVICE"
+      - name: Smoke test
+        run: |
+          if [ -z "$RAILWAY_TOKEN" ] || [ -z "$PUBLIC_URL" ]; then
+            echo "::warning::RAILWAY_TOKEN or PUBLIC_URL is not set; skipping smoke test."
+            exit 0
+          fi
+          for i in $(seq 1 12); do
+            curl -fsS "$PUBLIC_URL/ready" && break
+            sleep 10
+          done
+          curl -fsS "$PUBLIC_URL/health"
+          curl -fsS "$PUBLIC_URL/ready"
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST "$PUBLIC_URL/ask" -H 'Content-Type: application/json' -d '{"question":"hi"}')" = "401"
