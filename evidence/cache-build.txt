@@ -1,0 +1,59 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile:
+#1 transferring dockerfile: 772B 0.0s done
+#1 DONE 0.2s
+
+#2 [internal] load metadata for docker.io/library/python:3.11-slim
+#2 DONE 1.2s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 119B 0.0s done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 9.06kB 0.0s done
+#4 DONE 0.1s
+
+#5 [builder 1/4] FROM docker.io/library/python:3.11-slim@sha256:e41613d42d4891e4930f79523f93f81bbc7632584ec65e36ab055f41a800b41e
+#5 resolve docker.io/library/python:3.11-slim@sha256:e41613d42d4891e4930f79523f93f81bbc7632584ec65e36ab055f41a800b41e
+#5 resolve docker.io/library/python:3.11-slim@sha256:e41613d42d4891e4930f79523f93f81bbc7632584ec65e36ab055f41a800b41e 0.1s done
+#5 DONE 0.1s
+
+#6 [builder 3/4] COPY requirements.txt .
+#6 CACHED
+
+#7 [builder 4/4] RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+#7 CACHED
+
+#8 [runtime 2/6] WORKDIR /app
+#8 CACHED
+
+#9 [runtime 3/6] RUN groupadd --system agent && useradd --system --gid agent agent
+#9 CACHED
+
+#10 [builder 2/4] WORKDIR /build
+#10 CACHED
+
+#11 [runtime 4/6] COPY --from=builder /install /usr/local
+#11 CACHED
+
+#12 [runtime 5/6] COPY app ./app
+#12 DONE 0.5s
+
+#13 [runtime 6/6] COPY utils ./utils
+#13 DONE 0.2s
+
+#14 exporting to image
+#14 exporting layers
+#14 exporting layers 0.5s done
+#14 exporting manifest sha256:7e809d384ae8c3a7d25eac81f1489ac4e7256d74a6dfa88b30bd3015162a3d9e 0.1s done
+#14 exporting config sha256:f9c696ea7df12fddbe90d330607bdf3654e78096a4bdac199d85fe8d2a47c4f5 0.1s done
+#14 exporting attestation manifest sha256:6d08dac0d478f2ef111263d55b6844abf2096d8eb45c4a6303e8ed201cea6510 0.1s done
+#14 exporting manifest list sha256:13ba127fee9403ca35388f190128801fbfa2ae20611868a058e861c5ef7bddf0
+#14 exporting manifest list sha256:13ba127fee9403ca35388f190128801fbfa2ae20611868a058e861c5ef7bddf0 0.1s done
+#14 naming to docker.io/library/day12-agent:cache-test 0.0s done
+#14 unpacking to docker.io/library/day12-agent:cache-test
+#14 unpacking to docker.io/library/day12-agent:cache-test 0.2s done
+#14 DONE 1.2s
